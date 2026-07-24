@@ -49,19 +49,10 @@ def extract__text(pdf_path):
 
     return text
 
-resume_text = extract__text("Colin Miller Resume - July.pdf")
-# print(resume_text)
-# Job Description should be pasted in as a regular text
-# How to parse the resume and job description
-
-
 
 # Job Description Parsing
 # 
 # Retrieve Job Description
-
-
-job_description_text = input("Paste the job description: ")
 
 
 def parse_job_description(text):
