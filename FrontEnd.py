@@ -74,6 +74,8 @@ def get_data():
         output_text.insert(tk.END, resume_text or "(No text extracted from PDF.)")
         score_text.insert(tk.END,
         f"Here are the required skills:\n {Resume.parse_job_description(job_descr)[0]}\n")
+        score_text.insert(tk.END, 
+        f"Here the minimum years required: \n{Resume.parse_job_description(job_descr)[1]}")
     except Exception as error:
         output_text.insert(tk.END, f"Error reading PDF: {error}")
 

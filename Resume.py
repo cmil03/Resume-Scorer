@@ -50,6 +50,11 @@ def extract__text(pdf_path):
     return text
 
 
+# Resume Parser
+
+
+
+
 # Job Description Parsing
 # 
 # Retrieve Job Description
