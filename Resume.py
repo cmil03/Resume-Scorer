@@ -93,6 +93,7 @@ def parse_job_description(text):
     else:
         min_experience = 0
 
+    return required_skills, min_experience
 
     # # Consider this later
     # # First non-empty line becomes the title
