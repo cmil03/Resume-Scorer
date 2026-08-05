@@ -64,6 +64,9 @@ def get_data():
     pdf_file = resume_path.get().strip()
     output_text.delete(1.0, tk.END)
 
+    # resume = Resume.parse_resume(pdf_file)
+    resume = Resume.parse_resume(Resume.extract__text(pdf_file))
+
     if not pdf_file:
         output_text.insert(tk.END, "Please select a PDF resume file first.\n")
         return
@@ -76,6 +79,9 @@ def get_data():
         f"Here are the required skills:\n {Resume.parse_job_description(job_descr)[0]}\n")
         score_text.insert(tk.END, 
         f"Here the minimum years required: \n{Resume.parse_job_description(job_descr)[1]}")
+        score_text.insert(tk.END, 
+        f"\nHere is the resume info: \n{resume}")
+        
     except Exception as error:
         output_text.insert(tk.END, f"Error reading PDF: {error}")
 

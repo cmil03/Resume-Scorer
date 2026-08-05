@@ -51,8 +51,102 @@ def extract__text(pdf_path):
 
 
 # Resume Parser
+def parse_resume(text):
+    # Function should read the resume taken as argument "text" and extract the desired information
+    # return None for information not found
+    name = None
+    email = None
+    skills = []
+    experience = 0
 
+    if not text:
+        return name, email, skills, experience
+    
 
+    text = text.strip()
+    if not text:
+        return name, email, skills, experience
+
+    # Normalize whitespace and split into lines
+    text = re.sub(r"\r\n|\r", "\n", text)
+    lines = [line.strip() for line in text.split("\n") if line.strip()]
+
+    # Extract email
+    email_match = re.search(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b", text)
+    if email_match:
+        email = email_match.group(0)
+
+    # Extract name from first non-email, non-phone line
+    for line in lines[:5]:
+        if email and email in line:
+            continue
+        if re.search(r"\d", line):
+            continue
+        if re.search(r"\b(email|phone|mobile|linkedin|github)\b", line, re.IGNORECASE):
+            continue
+        if len(line.split()) <= 6 and re.match(r"^[A-Za-z .,'-]+$", line):
+            name = line
+            break
+
+    # Skills dictionary
+    known_skills = [
+        "Python",
+        "Java",
+        "SQL",
+        "Git",
+        "AWS",
+        "Docker",
+        "Kubernetes",
+        "JavaScript",
+        "React",
+        "C++",
+        "C",
+        "HTML",
+        "CSS",
+        "Pandas",
+        "NumPy",
+        "Spark",
+        "PySpark",
+        "Linux",
+        "TensorFlow",
+        "PyTorch",
+        "Flask",
+        "Django",
+        "Node.js",
+        "TypeScript",
+        "REST",
+        "GraphQL",
+        "Excel",
+        "Power BI",
+        "Tableau",
+        "Jenkins",
+        "CI/CD",
+        "Terraform",
+        "Ansible",
+    ]
+
+    lower_text = text.lower()
+    for skill in known_skills:
+        if skill.lower() in lower_text and skill not in skills:
+            skills.append(skill)
+
+    # Experience extraction patterns
+    experience_patterns = [
+        r"(\d+)\+?\s+years?\s+of\s+experience",
+        r"(\d+)\+?\s+years?\s+experience",
+        r"(\d+)\+?\s+years?\b",
+        r"(\d+)\s+yrs?\b",
+    ]
+    for pattern in experience_patterns:
+        match = re.search(pattern, lower_text)
+        if match:
+            try:
+                experience = int(match.group(1))
+                break
+            except ValueError:
+                continue
+
+    return name, email, skills, experience
 
 
 # Job Description Parsing
