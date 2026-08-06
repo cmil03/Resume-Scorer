@@ -1,5 +1,6 @@
 from pypdf import PdfReader #python reader import
 import re
+from datetime import datetime
 
 class Resume:
     def __init__(self, name, email, phone, skills, experience):
@@ -131,20 +132,59 @@ def parse_resume(text):
             skills.append(skill)
 
     # Experience extraction patterns
-    experience_patterns = [
-        r"(\d+)\+?\s+years?\s+of\s+experience",
-        r"(\d+)\+?\s+years?\s+experience",
-        r"(\d+)\+?\s+years?\b",
-        r"(\d+)\s+yrs?\b",
-    ]
-    for pattern in experience_patterns:
-        match = re.search(pattern, lower_text)
-        if match:
-            try:
-                experience = int(match.group(1))
-                break
-            except ValueError:
-                continue
+    month_map = {
+        "January": 1, "February": 2, "March": 3, "April": 4,
+        "May": 5, "June": 6, "July": 7, "August": 8,
+        "September": 9, "October": 10, "November": 11, "December": 12
+    }
+
+    pattern = (
+        r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})"
+        r"\s*[-–]\s*"
+        r"(Present|January|February|March|April|May|June|July|August|September|October|November|December)"
+        r"(?:\s+(\d{4}))?"
+    )
+
+    total_months = 0
+    now = datetime.now()
+
+    for match in re.finditer(pattern, text, re.IGNORECASE):
+        start_month_name = match.group(1)
+        start_year = int(match.group(2))
+        end_month_name = match.group(3)
+        end_year = match.group(4)
+
+        start_month = month_map.get(start_month_name.capitalize(), 1)
+        if end_month_name.lower() == "present":
+            end_year = now.year
+            end_month = now.month
+        else:
+            end_month = month_map.get(end_month_name.capitalize(), 12)
+            end_year = int(end_year) if end_year else now.year
+
+        months = (end_year - start_year) * 12 + (end_month - start_month) + 1
+        if months > 0:
+            total_months += months
+
+    if total_months > 0:
+        experience = round(total_months / 12, 1)
+    else:
+        experience_patterns = [
+            r"(\d+)\+?\s+years?\s+of\s+experience",
+            r"(\d+)\+?\s+years?\s+experience",
+            r"(\d+)\+?\s+years?\b",
+            r"(\d+)\s+yrs?\b",
+        ]
+        for pattern in experience_patterns:
+            match = re.search(pattern, lower_text)
+            if match:
+                try:
+                    experience = int(match.group(1))
+                    break
+                except ValueError:
+                    continue
+    #         except ValueError:
+    #             continue
 
     return name, email, skills, experience
 
