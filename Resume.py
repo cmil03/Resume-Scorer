@@ -3,28 +3,28 @@ import re
 from datetime import datetime
 
 class Resume:
-    def __init__(self, name, email, phone, skills, experience):
+    def __init__(self, name, email, skills, experience):
         self.name = name
         self.email = email
-        self.phone = phone
+        # self.phone = phone
         self.skills = skills
         self.experience = experience
 
     def display(self):
         print(f"Name: {self.name}")
         print(f"Email: {self.email}")
-        print(f"Phone: {self.phone}")
+        # print(f"Phone: {self.phone}")
         print(f"Skills: {', '.join(self.skills)}")
         print(f"Experience: {self.experience} years")
 
 class JobDescription:
-    def __init__(self, title, required_skills, min_experience):
-        self.title = title
+    def __init__(self, required_skills, min_experience):
+        # self.title = title
         self.required_skills = required_skills
         self.min_experience = min_experience
 
     def display(self):
-        print(f"Job Title: {self.title}")
+        # print(f"Job Title: {self.title}")
         print(f"Required Skills: {', '.join(self.required_skills)}")
         print(f"Minimum Experience: {self.min_experience} years")
 
@@ -248,27 +248,31 @@ def resume_scoring(resume, job_description):
     # resume should be an instance of the Resume class
     # Likewise with job descriptions
     # Still need to parse job description (job_skills) and such
-
+    skill_score = 0
     for skill in resume.skills:
-        if skill in job_description.job_skills:
+        if skill in job_description.required_skills:
             skill_score += 1
 
-    skill_score = skill_score/len(job_description.job_skills) * 100
+    if job_description.required_skills:
+        skill_score = skill_score / len(job_description.required_skills) * 100
+    else:
+        skill_score = 0
 
     # Years of experience
-    # Doesn't Check for edge cases or bad scneario (Job_experience required is less than 0)
-    if resume.experience >= job_description.job_experience:
+    # Doesn't Check for edge cases or bad scenario (Job_experience required is less than 0)
+    if resume.experience >= job_description.min_experience:
         exp_score = 100
-
-    elif (resume.experience > job_description.job_experience - 3) and (resume.experience < job_description.job_experience - 1):
+    elif (resume.experience > job_description.min_experience - 3) and (resume.experience < job_description.min_experience - 1):
         exp_score = 50
-
     else:
         exp_score = 0
 
-
     # Overall Score will be the average of all subcategory scores (Currently only 2 categories)
-    Ovr_score = (skill_score + exp_score)/2
-    return("Experience Score: %d\n Skill Score: %d\n", exp_score, skill_score)
+    ovr_score = (skill_score + exp_score) / 2
+    return (
+        f"Experience Score: {exp_score}\n"
+        f"Skill Score: {skill_score:.0f}\n"
+        f"Overall Score: {ovr_score:.0f}"
+    )
 
 

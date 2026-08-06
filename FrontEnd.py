@@ -66,7 +66,9 @@ def get_data():
 
     # resume = Resume.parse_resume(pdf_file)
     resume = Resume.parse_resume(Resume.extract__text(pdf_file))
-
+    resume_obj = Resume.Resume(resume[0], resume[1], resume[2], resume[3])
+    temp_jd = Resume.parse_job_description(job_descr)
+    job_desc_obj = Resume.JobDescription(Resume.parse_job_description(job_descr)[0],Resume.parse_job_description(job_descr)[1])
     if not pdf_file:
         output_text.insert(tk.END, "Please select a PDF resume file first.\n")
         return
@@ -75,12 +77,14 @@ def get_data():
         resume_text = Resume.extract__text(pdf_file)
         output_text.insert(tk.END, f"Selected PDF: {pdf_file}\n\n")
         output_text.insert(tk.END, resume_text or "(No text extracted from PDF.)")
-        score_text.insert(tk.END,
-        f"Here are the required skills:\n {Resume.parse_job_description(job_descr)[0]}\n")
-        score_text.insert(tk.END, 
-        f"Here the minimum years required: \n{Resume.parse_job_description(job_descr)[1]}")
-        score_text.insert(tk.END, 
-        f"\nHere is the resume info: \n{resume}")
+        # score_text.insert(tk.END,
+        # f"Here are the required skills:\n {Resume.parse_job_description(job_descr)[0]}\n")
+        # score_text.insert(tk.END, 
+        # f"Here the minimum years required: \n{Resume.parse_job_description(job_descr)[1]}")
+        # score_text.insert(tk.END, 
+        # f"\nHere is the resume info: \n{resume}")
+
+        score_text.insert(tk.END, f"\nYour Resume Score:\n{Resume.resume_scoring(resume_obj,job_desc_obj)}")
         
     except Exception as error:
         output_text.insert(tk.END, f"Error reading PDF: {error}")
